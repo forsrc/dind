@@ -1,3 +1,4 @@
+```
 mkdir -p /dind-k8s/temp/
 mkdir -p /dind-k8s/var/lib/docker
 mkdir -p /dind-k8s/var/lib/kubelet
@@ -21,3 +22,7 @@ docker run -d -it --privileged=true -d -it \
     --hostname dind-k8s \
     --name dind-k8s \
     forsrc/dind:k8s /usr/sbin/init
+
+
+
+```
