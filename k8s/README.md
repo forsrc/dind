@@ -23,7 +23,7 @@ docker run -d -it --privileged=true -d -it \
     forsrc/dind:k8s /usr/sbin/init
 
 # in docker
-docker network create --subnet=172.7.0.0/24 --gateway=172.7.0.1 net-k8s
+docker network create --subnet=172.7.0.0/24 --gateway=172.7.0.1 net-dind-k8s
 
 mkdir -p /dind-k8s/temp/
 mkdir -p /dind-k8s/master/var/lib/docker
@@ -41,7 +41,7 @@ mkdir -p /dind-k8s/node2/etc/kubernetes
 
 
 docker run -d -it --privileged=true -d -it \
-    --network net-k8s \
+    --network net-dind-k8s \
     --ip 172.7.0.10 \
     -v /dind-k8s/temp:/temp/ \
     -v /dind-k8s/master/var/lib/docker/:/var/lib/docker/ \
@@ -54,7 +54,7 @@ docker run -d -it --privileged=true -d -it \
     forsrc/dind:k8s /usr/sbin/init
 
 docker run -d -it --privileged=true -d -it \
-    --network net-k8s \
+    --network net-dind-k8s \
     --ip 172.7.0.11 \
     -v /dind-k8s/temp:/temp/ \
     -v /dind-k8s/node1/var/lib/docker/:/var/lib/docker/ \
@@ -67,7 +67,7 @@ docker run -d -it --privileged=true -d -it \
     forsrc/dind:k8s /usr/sbin/init
   
 docker run -d -it --privileged=true -d -it \
-    --network net-k8s \
+    --network net-dind-k8s \
     --ip 172.7.0.12 \
     -v /dind-k8s/temp:/temp/ \
     -v /dind-k8s/node2/var/lib/docker/:/var/lib/docker/ \
