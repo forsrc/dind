@@ -43,7 +43,7 @@ mkdir -p /dind-k8s/node2/etc/kubernetes
 docker run -d -it --privileged=true -d -it \
     --network net-dind-k8s \
     --ip 172.7.0.10 \
-    -v /dind-k8s/temp:/temp/ \
+    -v /temp:/temp/ \
     -v /dind-k8s/master/var/lib/docker/:/var/lib/docker/ \
     -v /dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/ \
     -v /dind-k8s/master/etc/docker/:/etc/docker/ \
@@ -58,7 +58,7 @@ docker run -d -it --privileged=true -d -it \
 docker run -d -it --privileged=true -d -it \
     --network net-dind-k8s \
     --ip 172.7.0.11 \
-    -v /dind-k8s/temp:/temp/ \
+    -v /temp:/temp/ \
     -v /dind-k8s/node1/var/lib/docker/:/var/lib/docker/ \
     -v /dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/ \
     -v /dind-k8s/node1/etc/docker/:/etc/docker/ \
@@ -71,7 +71,7 @@ docker run -d -it --privileged=true -d -it \
 docker run -d -it --privileged=true -d -it \
     --network net-dind-k8s \
     --ip 172.7.0.12 \
-    -v /dind-k8s/temp:/temp/ \
+    -v /temp:/temp/ \
     -v /dind-k8s/node2/var/lib/docker/:/var/lib/docker/ \
     -v /dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/ \
     -v /dind-k8s/node2/etc/docker/:/etc/docker/ \
