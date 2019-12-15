@@ -18,6 +18,8 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/etc/docker/:/etc/docker/ \
     -v /dind-k8s/etc/kubernetes/:/etc/kubernetes/ \
     -v /dind-k8s/dind-k8s:/dind-k8s/ \
+    -p 30080:30080 -p 30443:30443 -p 8080:8080 \
+    -p 30000:30000 -p 30001:30001 -p 30002:30002 -p 30003:30003 -p 30004:30004 -p 30005:30005 \
     --hostname dind-k8s \
     --name dind-k8s \
     forsrc/dind:k8s /usr/sbin/init
