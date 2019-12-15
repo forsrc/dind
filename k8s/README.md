@@ -46,6 +46,7 @@ docker run -d -it --privileged=true -d -it \
     -v /temp:/temp/ \
     -v /dind-k8s/master/var/lib/docker/:/var/lib/docker/ \
     -v /dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/ \
+    -v /dind-k8s/master/etc/cni/:/etc/cni/ \
     -v /dind-k8s/master/etc/docker/:/etc/docker/ \
     -v /dind-k8s/master/etc/kubernetes/:/etc/kubernetes/ \
     -v /dind-k8s/master/dind-k8s:/dind-k8s/ \
@@ -61,6 +62,7 @@ docker run -d -it --privileged=true -d -it \
     -v /temp:/temp/ \
     -v /dind-k8s/node1/var/lib/docker/:/var/lib/docker/ \
     -v /dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/ \
+    -v /dind-k8s/node1/etc/cni/:/etc/cni/ \
     -v /dind-k8s/node1/etc/docker/:/etc/docker/ \
     -v /dind-k8s/node1/etc/kubernetes/:/etc/kubernetes/ \
     -v /dind-k8s/node1/dind-k8s:/dind-k8s/ \
@@ -74,6 +76,7 @@ docker run -d -it --privileged=true -d -it \
     -v /temp:/temp/ \
     -v /dind-k8s/node2/var/lib/docker/:/var/lib/docker/ \
     -v /dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/ \
+    -v /dind-k8s/node2/etc/cni/:/etc/cni/ \
     -v /dind-k8s/node2/etc/docker/:/etc/docker/ \
     -v /dind-k8s/node2/etc/kubernetes/:/etc/kubernetes/ \
     -v /dind-k8s/node2/dind-k8s:/dind-k8s/ \
