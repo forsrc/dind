@@ -92,6 +92,13 @@ services:
     - -c
     - |
       sleep 5
+      if [ -e /temp/dind-k8s.ok ]
+      then
+         docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get node"
+         exit 0
+      fi
+
+      echo ========== starting ...
       cat <<EOF > /temp/master_init.sh
           swapoff -a
           echo 'nameserver 8.8.8.8' > /etc/resolv.conf
@@ -117,7 +124,8 @@ services:
       echo ========== node2 join ...
       docker -H tcp://172.17.0.1:2375 exec node2  bash -c "kubeadm reset -f && /temp/join.sh"
       echo ==========
-      docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get nodes"
+      docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get node"
+      echo OK > /temp/dind-k8s.ok
 
 secrets:
   dind-secret:
