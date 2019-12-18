@@ -144,3 +144,149 @@ networks:
       config:
       - subnet: 172.7.0.0/16
       # gateway: 172.7.0.1
+version: '3.3'
+services:
+
+  master:
+    image: forsrc/dind:k8s
+    container_name: master
+    hostname: master
+    privileged: true
+    # depends_on:
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/master/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/master/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/master/etc/docker/:/etc/docker/"
+    - "/dind-k8s/master/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/master/etc/cni/:/etc/cni/"
+    - "/dind-k8s/master/run/flannel/:/run/flannel/"
+    ports:
+    - 30000:3000
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.10
+    # environment:
+
+  node1:
+    image: forsrc/dind:k8s
+    container_name: node1
+    hostname: node1
+    privileged: true
+    depends_on:
+    - master
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/node1/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/node1/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/node1/etc/docker/:/etc/docker/"
+    - "/dind-k8s/node1/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/node1/etc/cni/:/etc/cni/"
+    - "/dind-k8s/node1/run/flannel/:/run/flannel"
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.11
+    # environment:
+
+  node2:
+    image: forsrc/dind:k8s
+    container_name: node2
+    hostname: node2
+    privileged: true
+    depends_on:
+    - master
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/node2/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/node2/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/node2/etc/docker/:/etc/docker/"
+    - "/dind-k8s/node2/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/node2/etc/cni/:/etc/cni/"
+    - "/dind-k8s/node2/run/flannel/:/run/flannel"
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.12
+    # environment:
+
+  k8s-init:
+    image: forsrc/dind
+    container_name: k8s-init
+    hostname: k8s-init
+    privileged: true
+    depends_on:
+    - master
+    - node1
+    - node2
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.2
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    command:
+    - /bin/bash
+    - -c
+    - |
+      sleep 5
+      if [ -e /temp/dind-k8s-admin.conf ]
+      then
+         docker -H tcp://172.17.0.1:2375 exec master bash -c "mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config"
+         docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get node"
+         sleep 5
+         docker -H tcp://172.17.0.1:2375 stop k8s-init
+         exit 0
+      fi
+
+      echo ========== starting ...
+      cat <<EOF > /temp/master_init.sh
+          swapoff -a
+          echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+          kubeadm reset -f
+          kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
+          mkdir -p /root/.kube
+          cp -f /etc/kubernetes/admin.conf /root/.kube/config
+          kubectl get node
+          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/join.sh
+          kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+          cp -f /etc/kubernetes/admin.conf /temp/dind-k8s-admin.conf
+      EOF
+ 
+      chmod +x /temp/master_init.sh
+
+      cat /temp/master_init.sh
+ 
+      echo ========== master init ...
+      docker -H tcp://172.17.0.1:2375 exec master bash -c "/temp/master_init.sh"
+
+      chmod +x /temp/join.sh
+      echo ========== node1 join ...
+      docker -H tcp://172.17.0.1:2375 exec node1  bash -c "kubeadm reset -f && /temp/join.sh"
+      echo ========== node2 join ...
+      docker -H tcp://172.17.0.1:2375 exec node2  bash -c "kubeadm reset -f && /temp/join.sh"
+      echo ==========
+      docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 5 && kubectl get node"
+
+      docker -H tcp://172.17.0.1:2375 stop k8s-init
+
+secrets:
+  dind-secret:
+    external: true
+
+networks:
+  net-dind-k8s:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.7.0.0/16
+      # gateway: 172.7.0.1
