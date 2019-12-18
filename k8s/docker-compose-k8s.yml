@@ -106,7 +106,7 @@ services:
          docker -H tcp://172.17.0.1:2375 exec master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config"
          docker -H tcp://172.17.0.1:2375 exec node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
          docker -H tcp://172.17.0.1:2375 exec node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
-         docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get node"
+         docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get node -o wide"
          docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get pod --all-namespaces -o wide"
          sleep 5
          docker -H tcp://172.17.0.1:2375 stop k8s-init
@@ -140,7 +140,7 @@ services:
       docker -H tcp://172.17.0.1:2375 exec node2  bash -c "kubeadm reset -f && /temp/join.sh"
       echo ==========
       docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 3 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
-      docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 5 && kubectl get node"
+      docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 5 && kubectl get node -o wide"
       docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get pod --all-namespaces -o wide"
       docker -H tcp://172.17.0.1:2375 stop k8s-init
 
