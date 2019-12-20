@@ -13,7 +13,7 @@ services:
     - "/dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/"
     - "/dind-k8s/master/var/lib/etcd:/var/lib/etcd/"
     - "/dind-k8s/master/var/lib/cni:/var/lib/cni/"
-    - "/dind-k8s/master/var/lib/dockershim/:/var/lib/dockershim/"
+    #- "/dind-k8s/master/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/master/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/master/etc/docker/:/etc/docker/"
     - "/dind-k8s/master/etc/kubernetes/:/etc/kubernetes/"
@@ -41,7 +41,7 @@ services:
     - "/dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/"
     - "/dind-k8s/node1/var/lib/etcd:/var/lib/etcd/"
     - "/dind-k8s/node1/var/lib/cni:/var/lib/cni/"
-    - "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
+    #- "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/node1/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/node1/etc/docker/:/etc/docker/"
     - "/dind-k8s/node1/etc/kubernetes/:/etc/kubernetes/"
@@ -67,7 +67,7 @@ services:
     - "/dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/"
     - "/dind-k8s/node2/var/lib/etcd:/var/lib/etcd/"
     - "/dind-k8s/node2/var/lib/cni:/var/lib/cni/"
-    - "/dind-k8s/node2/var/lib/dockershim/:/var/lib/dockershim/"
+    #- "/dind-k8s/node2/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/node2/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/node2/etc/docker/:/etc/docker/"
     - "/dind-k8s/node2/etc/kubernetes/:/etc/kubernetes/"
@@ -101,11 +101,14 @@ services:
     - -c
     - |
       sleep 5
-      if [ -e /temp/dind-k8s-admin.conf ]
+      if [ -e /temp/dind-k8s-admin.conf.bak ]
       then
-         docker -H tcp://172.17.0.1:2375 exec master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config"
-         docker -H tcp://172.17.0.1:2375 exec node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env"
-         docker -H tcp://172.17.0.1:2375 exec node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env"
+         echo ========== restarting ...
+         docker -H tcp://172.17.0.1:2375 exec master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config && cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml && systemctl restart kubelet"
+         docker -H tcp://172.17.0.1:2375 exec node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
+         docker -H tcp://172.17.0.1:2375 exec node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
+         sleep 5
+         echo ========== restart ok
          docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get node -o wide"
          docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get pod --all-namespaces -o wide"
          sleep 5
@@ -124,14 +127,30 @@ services:
           FLANNEL_MTU=1450              >> /run/flannel/subnet.env
           FLANNEL_IPMASQ=true           >> /run/flannel/subnet.env
 
-          cp -f run/flannel/subnet.env /temp/subnet.env
-          kubeadm reset -f
-          kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
+          cp -f /run/flannel/subnet.env /temp/subnet.env
+          if [ -e /etc/kubernetes/admin.conf ]
+          then
+              cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml
+              kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
+              #kubeadm init phase kubelet-start
+          else
+              echo ========== master reset ...
+              kubeadm reset -f
+              echo ========== master init ...
+              kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
+
+          fi
           mkdir -p /root/.kube
           cp -f /etc/kubernetes/admin.conf /root/.kube/config
+  
+          yum install bash-completion -y
+          echo 'source /usr/share/bash-completion/bash_completion' >>~/.bashrc
+          echo 'source <(kubectl completion bash)' >>~/.bashrc
+
           kubectl get node
           echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/join.sh
           cp -f /etc/kubernetes/admin.conf /temp/dind-k8s-admin.conf
+          cp -f /var/lib/kubelet/config.yaml /temp/dind-k8d-config.yaml
       EOF
  
       chmod +x /temp/master_init.sh
@@ -143,11 +162,11 @@ services:
 
       chmod +x /temp/join.sh
       echo ========== node1 join ...
-      docker -H tcp://172.17.0.1:2375 exec node1  bash -c "mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && kubeadm reset -f && /temp/join.sh"
+      docker -H tcp://172.17.0.1:2375 exec node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && kubeadm reset -f && /temp/join.sh"
       echo ========== node2 join ...
-      docker -H tcp://172.17.0.1:2375 exec node2  bash -c "mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && kubeadm reset -f && /temp/join.sh"
+      docker -H tcp://172.17.0.1:2375 exec node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/subnet.env /run/flannel/subnet.env && kubeadm reset -f && /temp/join.sh"
       echo ==========
-      docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 3 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+      docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 5 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
       docker -H tcp://172.17.0.1:2375 exec master bash -c "sleep 5 && kubectl get node -o wide"
       docker -H tcp://172.17.0.1:2375 exec master bash -c "kubectl get pod --all-namespaces -o wide"
       docker -H tcp://172.17.0.1:2375 stop k8s-init
