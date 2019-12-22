@@ -223,6 +223,7 @@ services:
           cp -f /run/flannel/subnet.env /temp/dind-k8s/subnet.env
           if [ -e /etc/kubernetes/admin.conf ]
           then
+              kubeadm reset -f
               cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml
               kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --control-plane-endpoint=k8s-lb:6443 --ignore-preflight-errors=all
               #kubeadm init phase kubelet-start
