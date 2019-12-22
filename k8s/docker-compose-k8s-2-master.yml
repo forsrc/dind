@@ -1,0 +1,298 @@
+version: '3.3'
+services:
+
+  k8s-master:
+    image: forsrc/dind:k8s
+    container_name: k8s-master
+    hostname: k8s-master
+    privileged: true
+    # depends_on:
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/master/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/master/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/master/var/lib/cni:/var/lib/cni/"
+    #- "/dind-k8s/master/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/master/var/run/kubernetes/:/var/run/kubernetes/"
+    - "/dind-k8s/master/etc/docker/:/etc/docker/"
+    - "/dind-k8s/master/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/master/etc/cni/:/etc/cni/"
+    - "/dind-k8s/master/run/flannel/:/run/flannel/"
+    ports:
+    - 30000:3000
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.10
+    extra_hosts:
+    - "k8s-master:172.7.0.10"
+    - "k8s-master-bak:172.7.0.100"
+    - "k8s-node1:172.7.0.11"
+    - "k8s-node2:172.7.0.12"
+    - "k8s-lb:172.7.0.100"
+    # environment:
+
+  k8s-master-bak:
+    image: forsrc/dind:k8s
+    container_name: k8s-master-bak
+    hostname: k8s-master-bak
+    privileged: true
+    depends_on:
+    - k8s-master
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/master-bak/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/master-bak/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/master-bak/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/master-bak/var/lib/cni:/var/lib/cni/"
+    #- "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/master-bak/var/run/kubernetes/:/var/run/kubernetes/"
+    - "/dind-k8s/master-bak/etc/docker/:/etc/docker/"
+    - "/dind-k8s/master-bak/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/master-bak/etc/cni/:/etc/cni/"
+    - "/dind-k8s/master-bak/run/flannel/:/run/flannel/"
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.20
+    extra_hosts:
+    - "k8s-master:172.7.0.10"
+    - "k8s-master-bak:172.7.0.20"
+    - "k8s-node1:172.7.0.11"
+    - "k8s-node2:172.7.0.12"
+    - "k8s-lb:172.7.0.100"
+    # environment:
+
+  k8s-node1:
+    image: forsrc/dind:k8s
+    container_name: k8s-node1
+    hostname: k8s-node1
+    privileged: true
+    depends_on:
+    - k8s-master
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/node1/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/node1/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/node1/var/lib/cni:/var/lib/cni/"
+    #- "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/node1/var/run/kubernetes/:/var/run/kubernetes/"
+    - "/dind-k8s/node1/etc/docker/:/etc/docker/"
+    - "/dind-k8s/node1/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/node1/etc/cni/:/etc/cni/"
+    - "/dind-k8s/node1/run/flannel/:/run/flannel/"
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.11
+    extra_hosts:
+    - "k8s-master:172.7.0.10"
+    - "k8s-master-bak:172.7.0.20"
+    - "k8s-node1:172.7.0.11"
+    - "k8s-node2:172.7.0.12"
+    - "k8s-lb:172.7.0.100"
+    # environment:
+
+  k8s-node2:
+    image: forsrc/dind:k8s
+    container_name: k8s-node2
+    hostname: k8s-node2
+    privileged: true
+    depends_on:
+    - k8s-master
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    - "/dind-k8s/node2/var/lib/docker/:/var/lib/docker/"
+    - "/dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/"
+    - "/dind-k8s/node2/var/lib/etcd:/var/lib/etcd/"
+    - "/dind-k8s/node2/var/lib/cni:/var/lib/cni/"
+    #- "/dind-k8s/node2/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/node2/var/run/kubernetes/:/var/run/kubernetes/"
+    - "/dind-k8s/node2/etc/docker/:/etc/docker/"
+    - "/dind-k8s/node2/etc/kubernetes/:/etc/kubernetes/"
+    - "/dind-k8s/node2/etc/cni/:/etc/cni/"
+    - "/dind-k8s/node2/run/flannel/:/run/flannel/"
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.12
+    extra_hosts:
+    - "k8s-master:172.7.0.10"
+    - "k8s-master-k8s:172.7.0.20"
+    - "k8s-node1:172.7.0.11"
+    - "k8s-node2:172.7.0.12"
+    - "k8s-lb:172.7.0.100"
+    # environment:
+
+  k8s-lb:
+    image: nginx
+    container_name: k8s-lb
+    hostname: k8s-lb
+    privileged: true
+    depends_on:
+    - k8s-master
+    - k8s-master-bak
+    secrets:
+    - dind-secret
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.100
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+
+  k8s-init:
+    image: forsrc/dind
+    container_name: k8s-init
+    hostname: k8s-int
+    privileged: true
+    depends_on:
+    - k8s-master
+    - k8s-master-bak
+    - k8s-lb
+    networks:
+      net-dind-k8s:
+        ipv4_address: 172.7.0.2
+    volumes:
+    - "/dind-k8s/temp:/temp/"
+    command:
+    - /bin/bash
+    - -c
+    - |
+      mkdir -p /temp/dind-k8s
+      rm -f /temp/dind-k8s/nginx.conf
+      docker -H tcp://172.17.0.1:2375 exec    k8s-lb bash -c "cat /etc/nginx/nginx.conf > /temp/dind-k8s/nginx.conf"
+      cat <<EOF >> /temp/dind-k8s/nginx.conf
+      stream {
+          upstream stream_backend {
+             least_conn;
+             server 172.7.0.10:6443;
+             server 172.7.0.20:6443;
+          }
+ 
+          server {
+              listen        6443;
+              proxy_pass    stream_backend;
+          }
+      }
+      EOF
+      docker -H tcp://172.17.0.1:2375 exec    k8s-lb bash -c "cat /temp/dind-k8s/nginx.conf > /etc/nginx/nginx.conf"
+
+      docker -H tcp://172.17.0.1:2375 restart k8s-lb
+
+      sleep 5
+
+      if [ -e /temp/dind-k8s/dind-k8s-admin.conf.bak ]
+      then
+         echo ========== restarting ...
+         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config && cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml && systemctl restart kubelet"
+         docker -H tcp://172.17.0.1:2375 exec k8s-node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
+         docker -H tcp://172.17.0.1:2375 exec k8s-node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
+         sleep 5
+         echo ========== restart ok
+         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubectl get node -o wide"
+         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubectl get pod --all-namespaces -o wide"
+         sleep 5
+         docker -H tcp://172.17.0.1:2375 stop k8s-init
+         exit 0
+      fi
+
+      echo ========== starting ...
+
+      cat <<EOF > /temp/dind-k8s/master_init.sh
+          mkdir -p /temp/dind-k8s
+
+          swapoff -a
+          echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+ 
+          mkdir -p /run/flannel/
+          FLANNEL_NETWORK=10.244.0.0/16 >  /run/flannel/subnet.env
+          FLANNEL_SUBNET=10.244.0.1/24  >> /run/flannel/subnet.env
+          FLANNEL_MTU=1450              >> /run/flannel/subnet.env
+          FLANNEL_IPMASQ=true           >> /run/flannel/subnet.env
+
+          cp -f /run/flannel/subnet.env /temp/dind-k8s/subnet.env
+          if [ -e /etc/kubernetes/admin.conf ]
+          then
+              cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml
+              kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --control-plane-endpoint=k8s-lb:6443 --ignore-preflight-errors=all
+              #kubeadm init phase kubelet-start
+          else
+              echo ========== master reset and init ...
+              kubeadm reset -f
+              kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --control-plane-endpoint=k8s-lb:6443  --ignore-preflight-errors=all
+
+          fi
+          mkdir -p /root/.kube
+          cp -f /etc/kubernetes/admin.conf /root/.kube/config
+  
+          yum makecache fast
+          yum install bash-completion -y
+
+          echo 'source /usr/share/bash-completion/bash_completion' >>~/.bashrc
+          echo 'source <(kubectl completion bash)'                 >>~/.bashrc
+
+          kubectl get node
+          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/dind-k8s/join.sh
+
+          
+          cp -f /etc/kubernetes/admin.conf   /temp/dind-k8s/dind-k8s-admin.conf
+          cp -f /var/lib/kubelet/config.yaml /temp/dind-k8s/dind-k8d-config.yaml
+          
+          mkdir -p /temp/dind-k8s/pki/etcd/
+          cp -rf /etc/kubernetes/pki/ca.*             /temp/dind-k8s/pki
+          cp -rf /etc/kubernetes/pki/sa.*             /temp/dind-k8s/pki
+          cp -rf /etc/kubernetes/pki/front-proxy-ca.* /temp/dind-k8s/pki
+          cp -rf /etc/kubernetes/pki/etcd/ca.*        /temp/dind-k8s/pki/etcd
+          echo "mkdir -p /etc/kubernetes/pki/etcd/"                                   >  /temp/dind-k8s/join_master.sh
+          echo "cp -rf /temp/dind-k8s/pki/ /etc/kubernetes/"                          >> /temp/dind-k8s/join_master.sh
+          echo "cp -f  /temp/dind-k8s/dind-k8s-admin.conf /etc/kubernetes/admin.conf" >> /temp/dind-k8s/join_master.sh
+          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all --control-plane >> /temp/dind-k8s/join_master.sh
+      EOF
+ 
+      chmod +x /temp/dind-k8s/master_init.sh
+
+      cat /temp/dind-k8s/master_init.sh
+ 
+      echo ========== master init ...
+      docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "/temp/dind-k8s/master_init.sh"
+
+      chmod +x /temp/dind-k8s/join.sh
+      chmod +x /temp/dind-k8s/join_master.sh
+
+
+      echo ========== master-bak join ...
+      docker -H tcp://172.17.0.1:2375 exec k8s-master-bak  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && kubeadm reset -f && cp -rf /temp/dind-k8s/pki /etc/kubernetes && /temp/dind-k8s/join_master.sh"
+
+      echo ========== node1 join ...
+      docker -H tcp://172.17.0.1:2375 exec k8s-node1       bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && kubeadm reset -f && cp -rf /temp/dind-k8s/pki /etc/kubernetes && /temp/dind-k8s/join.sh"
+
+      echo ========== node2 join ...
+      docker -H tcp://172.17.0.1:2375 exec k8s-node2       bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && kubeadm reset -f && cp -rf /temp/dind-k8s/pki /etc/kubernetes && /temp/dind-k8s/join.sh"
+
+      
+      echo ==========
+      docker -H tcp://172.17.0.1:2375 exec k8s-master     bash -c "sleep 5 && kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+      docker -H tcp://172.17.0.1:2375 exec k8s-master-bak bash -c "           kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+      docker -H tcp://172.17.0.1:2375 exec k8s-master     bash -c "sleep 5 && kubectl get node -o wide"
+      docker -H tcp://172.17.0.1:2375 exec k8s-master-bak bash -c "           kubectl get node -o wide"      
+      docker -H tcp://172.17.0.1:2375 exec k8s-master     bash -c "kubectl get pod --all-namespaces -o wide"
+      docker -H tcp://172.17.0.1:2375 stop k8s-init
+
+secrets:
+  dind-secret:
+    external: true
+
+networks:
+  net-dind-k8s:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.7.0.0/16
+      # gateway: 172.7.0.1
