@@ -176,7 +176,10 @@ services:
     - /bin/bash
     - -c
     - |
+      # echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
+
       mkdir -p /temp/dind-k8s
+
       if [ -f /temp/dind-k8s/nginx.conf ]
       then
       echo cat /temp/dind-k8s/nginx.conf
