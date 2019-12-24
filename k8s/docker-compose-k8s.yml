@@ -128,6 +128,9 @@ services:
     - /bin/bash
     - -c
     - |
+ 
+      # echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
+      
       mkdir -p /temp/dind-k8s/
       sleep 5
 
