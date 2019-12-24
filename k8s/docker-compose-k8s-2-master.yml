@@ -20,7 +20,19 @@ services:
     - "/dind-k8s/master/etc/cni/:/etc/cni/"
     - "/dind-k8s/master/run/flannel/:/run/flannel/"
     ports:
-    - 30000:3000
+    - 30000:30000
+    - 30001:30001
+    - 30002:30002
+    - 30003:30003
+    - 30004:30004
+    - 30005:30005
+    - 30006:30006
+    - 30007:30007
+    - 30008:30008
+    - 30009:30009
+    - 30080:30080
+    - 30443:30443
+    - 38080:38080
     secrets:
     - dind-secret
     networks:
@@ -148,8 +160,8 @@ services:
 
   k8s-init:
     image: forsrc/dind
-    container_name: k8s-ini
-    hostname: k8s-int
+    container_name: k8s-init
+    hostname: k8s-init
     privileged: true
     depends_on:
     - k8s-master
