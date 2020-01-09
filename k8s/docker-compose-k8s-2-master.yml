@@ -209,7 +209,7 @@ services:
       if [ -e /temp/dind-k8s/dind-k8s-admin.conf.bak ]
       then
          echo ========== restarting ...
-         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config && cp -f /temp/dind-config.yaml /var/lib/kubelet/config.yaml && systemctl restart kubelet"
+         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config && cp -f /temp/dind-k8s-config.yaml /var/lib/kubelet/config.yaml && systemctl restart kubelet"
          docker -H tcp://172.17.0.1:2375 exec k8s-node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
          docker -H tcp://172.17.0.1:2375 exec k8s-node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
          sleep 5
