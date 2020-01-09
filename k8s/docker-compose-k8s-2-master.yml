@@ -209,7 +209,10 @@ services:
       if [ -e /temp/dind-k8s/dind-k8s-admin.conf.bak ]
       then
          echo ========== restarting ...
-         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config && cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml && systemctl restart kubelet"
+         docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && mkdir -p /root/.kube && cp -f /temp/dind-k8s-admin.conf /root/.kube/config && cp -f /temp/dind-
+         
+         
+         -config.yaml /var/lib/kubelet/config.yaml && systemctl restart kubelet"
          docker -H tcp://172.17.0.1:2375 exec k8s-node1  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
          docker -H tcp://172.17.0.1:2375 exec k8s-node2  bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf && mkdir -p /run/flannel/ && cp -f /temp/dind-k8s/subnet.env /run/flannel/subnet.env && systemctl restart kubelet"
          sleep 5
@@ -239,7 +242,7 @@ services:
           if [ -e /etc/kubernetes/admin.conf ]
           then
               #kubeadm reset -f
-              cp -f /temp/dind-k8d-config.yaml /var/lib/kubelet/config.yaml
+              cp -f /temp/dind-k8s-config.yaml /var/lib/kubelet/config.yaml
               kubeadm init --kubernetes-version=v1.16.3 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --control-plane-endpoint=k8s-lb:6443 --ignore-preflight-errors=all
               #kubeadm init phase kubelet-start
           else
@@ -258,11 +261,11 @@ services:
           echo 'source <(kubectl completion bash)'                 >>~/.bashrc
 
           kubectl get node
-          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/dind-k8s/join.sh
+          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/dind-ds/join.sh
 
           
           cp -f /etc/kubernetes/admin.conf   /temp/dind-k8s/dind-k8s-admin.conf
-          cp -f /var/lib/kubelet/config.yaml /temp/dind-k8s/dind-k8d-config.yaml
+          cp -f /var/lib/kubelet/config.yaml /temp/dind-k8s/dind-k8s-config.yaml
           
           mkdir -p /temp/dind-k8s/pki/etcd/
           cp -rf /etc/kubernetes/pki/ca.*             /temp/dind-k8s/pki
