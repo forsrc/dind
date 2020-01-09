@@ -190,7 +190,7 @@ services:
 
           
           cp -f /etc/kubernetes/admin.conf   /temp/dind-k8s/dind-k8s-admin.conf
-          cp -f /var/lib/kubelet/config.yaml /temp/dind-k8s/dind-k8d-config.yaml
+          cp -f /var/lib/kubelet/config.yaml /temp/dind-k8s/dind-k8s-config.yaml
 
           mkdir -p /temp/dind-k8s/pki/etcd/
           cp -rf /etc/kubernetes/pki/ca.*             /temp/dind-k8s/pki
