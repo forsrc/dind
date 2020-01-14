@@ -40,7 +40,7 @@ services:
         ipv4_address: 172.7.0.10
     extra_hosts:
     - "k8s-master:172.7.0.10"
-    - "k8s-master-bak:172.7.0.100"
+    - "k8s-master-bak:172.7.0.20"
     - "k8s-node1:172.7.0.11"
     - "k8s-node2:172.7.0.12"
     - "k8s-lb:172.7.0.100"
