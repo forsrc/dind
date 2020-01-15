@@ -129,8 +129,6 @@ services:
     - -c
     - |
     
-      K8S_VERSION=$(kubeadm version -o short)
-
       # echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
       
       mkdir -p /temp/dind-k8s/
@@ -170,13 +168,13 @@ services:
           then
               kubeadm reset -f
               cp -f /temp/dind-k8s-config.yaml /var/lib/kubelet/config.yaml
-              #kubeadm init --kubernetes-version=$K8S_VERSION --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
+              #kubeadm init --kubernetes-version=`docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubeadm version -o short"` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
               #kubeadm init phase kubelet-start
-              kubeadm init --kubernetes-version=$K8S_VERSION --ignore-preflight-errors=all
+              kubeadm init --kubernetes-version=`docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubeadm version -o short"` --ignore-preflight-errors=all
           else
               echo ========== master reset and init ...
               kubeadm reset -f
-              kubeadm init --kubernetes-version=$K8S_VERSION --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
+              kubeadm init --kubernetes-version=`docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubeadm version -o short"` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
 
           fi
           mkdir -p /root/.kube
