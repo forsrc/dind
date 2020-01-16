@@ -259,7 +259,7 @@ services:
           echo 'source <(kubectl completion bash)'                 >>~/.bashrc
 
           kubectl get node
-          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/dind-ds/join.sh
+          echo \`kubeadm token create --print-join-command\` --ignore-preflight-errors=all > /temp/dind-k8s/join.sh
 
           
           cp -f /etc/kubernetes/admin.conf   /temp/dind-k8s/dind-k8s-admin.conf
