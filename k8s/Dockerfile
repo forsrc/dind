@@ -2,7 +2,7 @@ FROM forsrc/dind
 
 RUN yum makecache fast
 
-RUN sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+RUN sed -i 's/^SELINUX=enforcing$/SELINUX=disable/' /etc/selinux/config
 
 RUN yum install -y yum-utils device-mapper-persistent-data lvm2 ipvsadm ipset conntrack ntp
 
