@@ -11,9 +11,9 @@ services:
     - "/dind-k8s/temp:/temp/"
     - "/dind-k8s/master/var/lib/docker/:/var/lib/docker/"
     - "/dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/"
-    - "/dind-k8s/master/var/lib/etcd:/var/lib/etcd/"
-    - "/dind-k8s/master/var/lib/cni:/var/lib/cni/"
-    #- "/dind-k8s/master/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/master/var/lib/etcd/:/var/lib/etcd/"
+    - "/dind-k8s/master/var/lib/cni/:/var/lib/cni/"
+    - "/dind-k8s/master/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/master/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/master/etc/docker/:/etc/docker/"
     - "/dind-k8s/master/etc/kubernetes/:/etc/kubernetes/"
@@ -33,8 +33,6 @@ services:
     - 30080:30080
     - 30443:30443
     - 38080:38080
-    secrets:
-    - dind-secret
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.10
@@ -53,20 +51,19 @@ services:
     privileged: true
     depends_on:
     - k8s-master
+    - k8s-lb
     volumes:
     - "/dind-k8s/temp:/temp/"
     - "/dind-k8s/master-bak/var/lib/docker/:/var/lib/docker/"
     - "/dind-k8s/master-bak/var/lib/kubelet/:/var/lib/kubelet/"
-    - "/dind-k8s/master-bak/var/lib/etcd:/var/lib/etcd/"
-    - "/dind-k8s/master-bak/var/lib/cni:/var/lib/cni/"
-    #- "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/master-bak/var/lib/etcd/:/var/lib/etcd/"
+    - "/dind-k8s/master-bak/var/lib/cni/:/var/lib/cni/"
+    - "/dind-k8s/master-bak/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/master-bak/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/master-bak/etc/docker/:/etc/docker/"
     - "/dind-k8s/master-bak/etc/kubernetes/:/etc/kubernetes/"
     - "/dind-k8s/master-bak/etc/cni/:/etc/cni/"
     - "/dind-k8s/master-bak/run/flannel/:/run/flannel/"
-    secrets:
-    - dind-secret
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.20
@@ -89,16 +86,14 @@ services:
     - "/dind-k8s/temp:/temp/"
     - "/dind-k8s/node1/var/lib/docker/:/var/lib/docker/"
     - "/dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/"
-    - "/dind-k8s/node1/var/lib/etcd:/var/lib/etcd/"
-    - "/dind-k8s/node1/var/lib/cni:/var/lib/cni/"
-    #- "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/node1/var/lib/etcd/:/var/lib/etcd/"
+    - "/dind-k8s/node1/var/lib/cni/:/var/lib/cni/"
+    - "/dind-k8s/node1/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/node1/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/node1/etc/docker/:/etc/docker/"
     - "/dind-k8s/node1/etc/kubernetes/:/etc/kubernetes/"
     - "/dind-k8s/node1/etc/cni/:/etc/cni/"
     - "/dind-k8s/node1/run/flannel/:/run/flannel/"
-    secrets:
-    - dind-secret
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.11
@@ -121,16 +116,14 @@ services:
     - "/dind-k8s/temp:/temp/"
     - "/dind-k8s/node2/var/lib/docker/:/var/lib/docker/"
     - "/dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/"
-    - "/dind-k8s/node2/var/lib/etcd:/var/lib/etcd/"
-    - "/dind-k8s/node2/var/lib/cni:/var/lib/cni/"
-    #- "/dind-k8s/node2/var/lib/dockershim/:/var/lib/dockershim/"
+    - "/dind-k8s/node2/var/lib/etcd/:/var/lib/etcd/"
+    - "/dind-k8s/node2/var/lib/cni/:/var/lib/cni/"
+    - "/dind-k8s/node2/var/lib/dockershim/:/var/lib/dockershim/"
     - "/dind-k8s/node2/var/run/kubernetes/:/var/run/kubernetes/"
     - "/dind-k8s/node2/etc/docker/:/etc/docker/"
     - "/dind-k8s/node2/etc/kubernetes/:/etc/kubernetes/"
     - "/dind-k8s/node2/etc/cni/:/etc/cni/"
     - "/dind-k8s/node2/run/flannel/:/run/flannel/"
-    secrets:
-    - dind-secret
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.12
@@ -149,9 +142,6 @@ services:
     privileged: true
     depends_on:
     - k8s-master
-    - k8s-master-bak
-    secrets:
-    - dind-secret
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.100
@@ -167,6 +157,8 @@ services:
     - k8s-master
     - k8s-master-bak
     - k8s-lb
+    - k8s-node1
+    - k8s-node2
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.2
@@ -177,9 +169,7 @@ services:
     - -c
     - |
       # echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
-
       mkdir -p /temp/dind-k8s
-
       if [ -f /temp/dind-k8s/nginx.conf ]
       then
       echo cat /temp/dind-k8s/nginx.conf
@@ -305,9 +295,6 @@ services:
       docker -H tcp://172.17.0.1:2375 exec k8s-master     bash -c "kubectl get pod --all-namespaces -o wide"
       docker -H tcp://172.17.0.1:2375 stop k8s-init
 
-secrets:
-  dind-secret:
-    external: true
 
 networks:
   net-dind-k8s:
