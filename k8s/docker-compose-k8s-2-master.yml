@@ -217,7 +217,6 @@ services:
           mkdir -p /temp/dind-k8s
 
           swapoff -a
-          sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
           echo 'nameserver 8.8.8.8' > /etc/resolv.conf
  
