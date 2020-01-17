@@ -17,7 +17,7 @@ RUN systemctl enable docker
 RUN systemctl enable kubelet
 
 VOLUME /var/lib/docker/
-VOLUME /var/lib/ketcd/
+VOLUME /var/lib/kubelet/
 VOLUME /var/lib/etcd/
 VOLUME /etc/kubernetes/
 
