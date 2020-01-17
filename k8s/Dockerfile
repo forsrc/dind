@@ -16,4 +16,9 @@ RUN rm -rf /var/cache/yum/* && yum clean all
 RUN systemctl enable docker
 RUN systemctl enable kubelet
 
+VOLUME /var/lib/docker/
+VOLUME /var/lib/ketcd/
+VOLUME /var/lib/etcd/
+VOLUME /etc/kubernetes/
+
 CMD [ "/usr/sbin/init"]
