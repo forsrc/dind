@@ -11,6 +11,8 @@ RUN echo -e "[kubernetes]\nname=Kubernetes\nbaseurl=https://mirrors.aliyun.com/k
 RUN yum install -y kubelet kubeadm kubectl nfs-utils
 RUN kubelet --version
 
+RUN rm -rf /var/cache/yum/* && yum clean all
+
 RUN systemctl enable docker
 RUN systemctl enable kubelet
 
