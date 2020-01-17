@@ -15,6 +15,8 @@ RUN chmod +x /usr/local/bin/wrapdocker
 
 VOLUME /var/lib/docker
 
+RUN rm -rf /var/cache/yum/* && yum clean all
+
 RUN systemctl enable docker
 
 EXPOSE 2375 2376
