@@ -19,20 +19,6 @@ services:
     - "/dind-k8s/master/etc/kubernetes/:/etc/kubernetes/"
     - "/dind-k8s/master/etc/cni/:/etc/cni/"
     - "/dind-k8s/master/run/flannel/:/run/flannel/"
-    ports:
-    - 30000:30000
-    - 30001:30001
-    - 30002:30002
-    - 30003:30003
-    - 30004:30004
-    - 30005:30005
-    - 30006:30006
-    - 30007:30007
-    - 30008:30008
-    - 30009:30009
-    - 30080:30080
-    - 30443:30443
-    - 38080:38080
     networks:
       net-dind-k8s:
         ipv4_address: 172.7.0.10
@@ -233,7 +219,7 @@ services:
               cp -f /temp/dind-k8s-config.yaml /var/lib/kubelet/config.yaml
               #kubeadm init --kubernetes-version=`docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubeadm version -o short"` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --control-plane-endpoint=k8s-lb:6443 --ignore-preflight-errors=all
               #kubeadm init phase kubelet-start
-              kubeadm init --kubernetes-version=`docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubeadm version -o short"` --ignore-preflight-errors=all
+              kubeadm init --kubernetes-version=`docker -H tcp://172.17.0.1:2375 exec k8s-master bash -c "kubeadm version -o short"` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10  --control-plane-endpoint=k8s-lb:6443  --ignore-preflight-errors=all
           else
               echo ========== master reset and init ...
               kubeadm reset -f
