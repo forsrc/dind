@@ -85,7 +85,7 @@ docker exec k8s-master sh -c "$SUBNET_ENV"
 docker exec k8s-node1  sh -c "$SUBNET_ENV"
 docker exec k8s-node2  sh -c "$SUBNET_ENV"
 
-docker exec k8s-master sh -c "kubeadm init --kubernetes-version=`docker exec k8s-master bash -c 'kubeadm version -o short'` --ignore-preflight-errors=all"
+docker exec k8s-master sh -c "kubeadm init --kubernetes-version=`docker exec k8s-master bash -c 'kubeadm version -o short'` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all"
 docker exec k8s-master mkdir -p /root/.kube
 docker exec k8s-master cp -f /etc/kubernetes/admin.conf /root/.kube/config
 docker exec k8s-master chown 0:0 /root/.kube/config
