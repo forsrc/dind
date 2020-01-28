@@ -97,7 +97,7 @@ docker exec k8s-master chown 0:0 /root/.kube/config
 docker exec k8s-node1  sh -c "`docker exec k8s-master kubeadm token create --print-join-command` --ignore-preflight-errors=all"
 docker exec k8s-node2  sh -c "`docker exec k8s-master kubeadm token create --print-join-command` --ignore-preflight-errors=all"
 
-
+sleep 10
 docker exec k8s-master kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 #docker exec k8s-master yum install -y bash-completion
