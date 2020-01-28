@@ -1,7 +1,7 @@
 #echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
 
-docker rm -f k8s-master k8s-node1 k8s-node2
-docker network rm net-dind-k8s
+#docker rm -f k8s-master k8s-node1 k8s-node2
+#docker network rm net-dind-k8s
 
 
 mkdir -p /dind-k8s/temp/
@@ -18,13 +18,13 @@ mkdir -p /dind-k8s/node2/var/lib/kubelet
 mkdir -p /dind-k8s/node2/etc/docker
 mkdir -p /dind-k8s/node2/etc/kubernetes
 
-rm -rf /dind-k8s/master/etc/kubernetes/*
-rm -rf /dind-k8s/node1/etc/kubernetes/*
-rm -rf /dind-k8s/node2/etc/kubernetes/*
+#rm -rf /dind-k8s/master/etc/kubernetes/*
+#rm -rf /dind-k8s/node1/etc/kubernetes/*
+#rm -rf /dind-k8s/node2/etc/kubernetes/*
 
-rm -rf /dind-k8s/master/var/lib/kubelet/*
-rm -rf /dind-k8s/node1/var/lib/kubelet/*
-rm -rf /dind-k8s/node2/var/lib/kubelet/*
+#rm -rf /dind-k8s/master/var/lib/kubelet/*
+#rm -rf /dind-k8s/node1/var/lib/kubelet/*
+#rm -rf /dind-k8s/node2/var/lib/kubelet/*
 
 mkdir -p /dind-k8s/etc/
 echo 'nameserver 8.8.8.8' > /dind-k8s/etc/resolv.conf
@@ -71,16 +71,16 @@ docker run -d -it --privileged=true -d -it \
     --name k8s-node2 \
     forsrc/dind:k8s /usr/sbin/init
 
-docker exec k8s-master rm -f /etc/cni/net.d/*flannel*
-docker exec k8s-node1  rm -f /etc/cni/net.d/*flannel*
-docker exec k8s-node2  rm -f /etc/cni/net.d/*flannel*
+#docker exec k8s-master rm -f /etc/cni/net.d/*flannel*
+#docker exec k8s-node1  rm -f /etc/cni/net.d/*flannel*
+#docker exec k8s-node2  rm -f /etc/cni/net.d/*flannel*
 
-docker exec k8s-master ip link delete cni0
-docker exec k8s-master ip link delete flannel.1
-docker exec k8s-node1  ip link delete cni0
-docker exec k8s-node1  ip link delete flannel.1
-docker exec k8s-node2  ip link delete cni0
-docker exec k8s-node2  ip link delete flannel.1
+#docker exec k8s-master ip link delete cni0
+#docker exec k8s-master ip link delete flannel.1
+#docker exec k8s-node1  ip link delete cni0
+#docker exec k8s-node1  ip link delete flannel.1
+#docker exec k8s-node2  ip link delete cni0
+#docker exec k8s-node2  ip link delete flannel.1
 
 
 SUBNET_ENV="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.0.1/24 >> /run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /run/flannel/subnet.env"
