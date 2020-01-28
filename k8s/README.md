@@ -1,4 +1,7 @@
 ```
+echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
+
+
 mkdir -p /dind-k8s/dind-k8s/etc
 
 echo 'nameserver 8.8.8.8' > /dind-k8s/dind-k8s/etc/resolv.conf
