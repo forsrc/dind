@@ -1,3 +1,4 @@
+#echo 262144 > /sys/module/nf_conntrack/parameters/hashsize
 
 docker rm -f k8s-master k8s-node1 k8s-node2
 docker network rm net-dind-k8s
