@@ -83,7 +83,7 @@ docker run -d -it --privileged=true -d -it \
 #docker exec k8s-node2  ip link delete flannel.1
 
 
-SUBNET_ENV="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.0.1/24 >> /run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /run/flannel/subnet.env"
+SUBNET_ENV="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.1.1/24 >> /run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /run/flannel/subnet.env"
 
 docker exec k8s-master sh -c "$SUBNET_ENV"
 docker exec k8s-node1  sh -c "$SUBNET_ENV"
