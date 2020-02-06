@@ -85,9 +85,9 @@ docker run -d -it --privileged=true -d -it \
 
 SUBNET_ENV="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.0.1/24 >> /run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /run/flannel/subnet.env"
 
-docker exec k8s-master sh -c "$SUBNET_ENV"
-docker exec k8s-node1  sh -c "$SUBNET_ENV"
-docker exec k8s-node2  sh -c "$SUBNET_ENV"
+#docker exec k8s-master sh -c "$SUBNET_ENV"
+#docker exec k8s-node1  sh -c "$SUBNET_ENV"
+#docker exec k8s-node2  sh -c "$SUBNET_ENV"
 
 docker exec k8s-master sh -c "kubeadm init --kubernetes-version=`docker exec k8s-master bash -c 'kubeadm version -o short'` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all"
 docker exec k8s-master mkdir -p /root/.kube
