@@ -19,6 +19,8 @@ RUN rm -rf /var/cache/yum/* && yum clean all
 
 RUN systemctl enable docker
 
+RUN docker --version
+
 EXPOSE 2375 2376
 
 CMD [ "/usr/sbin/init"]
