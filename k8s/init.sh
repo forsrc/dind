@@ -41,6 +41,7 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/master/var/lib/kubelet/:/var/lib/kubelet/ \
     -v /dind-k8s/master/etc/docker/:/etc/docker/ \
     -v /dind-k8s/master/etc/kubernetes/:/etc/kubernetes/ \
+    -v /dind-k8s/master/run/flannel/:/run/flannel/ \
     --hostname k8s-master \
     --name k8s-master \
     forsrc/dind:k8s /usr/sbin/init
@@ -54,6 +55,7 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/node1/var/lib/kubelet/:/var/lib/kubelet/ \
     -v /dind-k8s/node1/etc/docker/:/etc/docker/ \
     -v /dind-k8s/node1/etc/kubernetes/:/etc/kubernetes/ \
+    -v /dind-k8s/node1/run/flannel/:/run/flannel/ \
     --hostname k8s-node1 \
     --name k8s-node1 \
     forsrc/dind:k8s /usr/sbin/init
@@ -67,6 +69,7 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/node2/var/lib/kubelet/:/var/lib/kubelet/ \
     -v /dind-k8s/node2/etc/docker/:/etc/docker/ \
     -v /dind-k8s/node2/etc/kubernetes/:/etc/kubernetes/ \
+    -v /dind-k8s/node2/run/flannel/:/run/flannel/ \
     --hostname k8s-node2 \
     --name k8s-node2 \
     forsrc/dind:k8s /usr/sbin/init
@@ -87,9 +90,17 @@ SUBNET_ENV_1="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /ru
 SUBNET_ENV_2="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.0.2/24 >> /run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /run/flannel/subnet.env"
 SUBNET_ENV_3="mkdir -p /run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.0.3/24 >> /run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /run/flannel/subnet.env"
 
-docker exec k8s-master sh -c "$SUBNET_ENV_1"
-docker exec k8s-node1  sh -c "$SUBNET_ENV_2"
-docker exec k8s-node2  sh -c "$SUBNET_ENV_3"
+#docker exec k8s-master sh -c "$SUBNET_ENV_1"
+#docker exec k8s-node1  sh -c "$SUBNET_ENV_2"
+#docker exec k8s-node2  sh -c "$SUBNET_ENV_3"
+
+SUBNET_ENV_1="mkdir -p /dind-k8s/master/run/flannel/ && echo FLANNEL_NETWORK=10.244.0.0/16 > /dind-k8s/master/run/flannel/subnet.env && echo FLANNEL_SUBNET=10.244.0.1/24 >> /dind-k8s/master/run/flannel/subnet.env && echo FLANNEL_MTU=1450 >> /dind-k8s/master/run/flannel/subnet.env && echo FLANNEL_IPMASQ=true >> /dind-k8s/master/run/flannel/subnet.env"
+SUBNET_ENV_2="mkdir -p /dind-k8s/node2/run/flannel/  && echo FLANNEL_NETWORK=10.244.0.0/16 > /dind-k8s/node1/run/flannel/subnet.env  && echo FLANNEL_SUBNET=10.244.0.2/24 >> /dind-k8s/node1/run/flannel/subnet.env  && echo FLANNEL_MTU=1450 >> /dind-k8s/node1/run/flannel/subnet.env  && echo FLANNEL_IPMASQ=true >> /dind-k8s/node1/run/flannel/subnet.env"
+SUBNET_ENV_3="mkdir -p /dind-k8s/node2/run/flannel/  && echo FLANNEL_NETWORK=10.244.0.0/16 > /dind-k8s/node2/run/flannel/subnet.env  && echo FLANNEL_SUBNET=10.244.0.3/24 >> /dind-k8s/node2/run/flannel/subnet.env  && echo FLANNEL_MTU=1450 >> /dind-k8s/node2/run/flannel/subnet.env  && echo FLANNEL_IPMASQ=true >> /dind-k8s/node2/run/flannel/subnet.env"
+
+sh -c "$SUBNET_ENV_1"
+sh -c "$SUBNET_ENV_2"
+sh -c "$SUBNET_ENV_3"
 
 docker exec k8s-master sh -c "kubeadm init --kubernetes-version=`docker exec k8s-master bash -c 'kubeadm version -o short'` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all"
 docker exec k8s-master mkdir -p /root/.kube
@@ -109,4 +120,3 @@ docker exec k8s-master sh -c "echo 'source <(kubectl completion bash)'          
 docker exec k8s-master kubectl get nodes
 
 docker exec k8s-master kubectl get pod --all-namespaces -o wide
-
