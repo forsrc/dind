@@ -74,6 +74,16 @@ docker run -d -it --privileged=true -d -it \
     --name k8s-node2 \
     forsrc/dind:k8s /usr/sbin/init
 
+docker exec k8s-master sh -c "echo 172.7.0.10 k8s-master > /etc/hosts"
+docker exec k8s-master sh -c "echo 172.7.0.11 k8s-node1 >> /etc/hosts"
+docker exec k8s-master sh -c "echo 172.7.0.12 k8s-node2 >> /etc/hosts"
+docker exec k8s-node1  sh -c "echo 172.7.0.10 k8s-master > /etc/hosts"
+docker exec k8s-node1  sh -c "echo 172.7.0.11 k8s-node1 >> /etc/hosts"
+docker exec k8s-node1  sh -c "echo 172.7.0.12 k8s-node2 >> /etc/hosts"
+docker exec k8s-node2  sh -c "echo 172.7.0.10 k8s-master > /etc/hosts"
+docker exec k8s-node2  sh -c "echo 172.7.0.11 k8s-node1 >> /etc/hosts"
+docker exec k8s-node2  sh -c "echo 172.7.0.12 k8s-node2 >> /etc/hosts"
+
 #docker exec k8s-master rm -f /etc/cni/net.d/*flannel*
 #docker exec k8s-node1  rm -f /etc/cni/net.d/*flannel*
 #docker exec k8s-node2  rm -f /etc/cni/net.d/*flannel*
