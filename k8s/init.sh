@@ -3,9 +3,7 @@
 #docker rm -f k8s-master k8s-node1 k8s-node2
 #docker network rm net-dind-k8s
 
-#echo -e '{\n\t "dns": ["8.8.8.8"]\n}' > /etc/docker/daemon.json
-#systemctl daemon-reload
-#systemctl restart docker
+#echo -e '{\n\t "dns": ["8.8.8.8"]\n}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker
 
 mkdir -p /dind-k8s/temp/
 mkdir -p /dind-k8s/master/var/lib/docker
@@ -76,6 +74,10 @@ docker run -d -it --privileged=true -d -it \
     --hostname k8s-node2 \
     --name k8s-node2 \
     forsrc/dind:k8s /usr/sbin/init
+
+#docker exec k8s-master sh -c "echo -e '{\n\t \"dns\": [\"8.8.8.8\"]\n}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
+#docker exec k8s-node1  sh -c "echo -e '{\n\t \"dns\": [\"8.8.8.8\"]\n}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
+#docker exec k8s-node2  sh -c "echo -e '{\n\t \"dns\": [\"8.8.8.8\"]\n}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
 
 docker exec k8s-master sh -c "echo 127.0.01   localhost  >  /etc/hosts"
 docker exec k8s-master sh -c "echo 172.7.0.10 k8s-master >> /etc/hosts"
