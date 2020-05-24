@@ -3,6 +3,9 @@
 #docker rm -f k8s-master k8s-node1 k8s-node2
 #docker network rm net-dind-k8s
 
+#echo -e '{\n\t "dns": ["8.8.8.8"]\n}' > /etc/docker/daemon.json
+#systemctl daemon-reload
+#systemctl restart docker
 
 mkdir -p /dind-k8s/temp/
 mkdir -p /dind-k8s/master/var/lib/docker
