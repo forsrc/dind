@@ -84,7 +84,7 @@ docker exec k8s-master sh -c "echo 172.7.0.10 k8s-master >> /etc/hosts"
 docker exec k8s-master sh -c "echo 172.7.0.11 k8s-node1  >> /etc/hosts"
 docker exec k8s-master sh -c "echo 172.7.0.12 k8s-node2  >> /etc/hosts"
 
-docker exec k8s-node1 sh -c "echo 127.0.0.1   localhost  >  /etc/hosts"
+docker exec k8s-node1  sh -c "echo 127.0.0.1  localhost  >  /etc/hosts"
 docker exec k8s-node1  sh -c "echo 172.7.0.10 k8s-master >> /etc/hosts"
 docker exec k8s-node1  sh -c "echo 172.7.0.11 k8s-node1  >> /etc/hosts"
 docker exec k8s-node1  sh -c "echo 172.7.0.12 k8s-node2  >> /etc/hosts"
