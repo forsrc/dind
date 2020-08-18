@@ -86,7 +86,11 @@ docker exec k8s-node2  sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kube
 docker exec k8s-master sh -c "echo 'ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false' >> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
 docker exec k8s-node1  sh -c "echo 'ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false' >> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
 docker exec k8s-node2  sh -c "echo 'ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false' >> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
- 
+
+docker exec k8s-master sh -c "systemctl daemon-reload && systemctl restart kubelet"
+docker exec k8s-node1  sh -c "systemctl daemon-reload && systemctl restart kubelet"
+docker exec k8s-node2  sh -c "systemctl daemon-reload && systemctl restart kubelet"
+
 docker exec k8s-master sh -c "echo 127.0.0.1  localhost  >  /etc/hosts"
 docker exec k8s-master sh -c "echo 172.7.0.10 k8s-master >> /etc/hosts"
 docker exec k8s-master sh -c "echo 172.7.0.11 k8s-node1  >> /etc/hosts"
