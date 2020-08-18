@@ -83,9 +83,9 @@ docker exec k8s-master sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kube
 docker exec k8s-node1  sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service"
 docker exec k8s-node2  sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service"
 
-docker exec k8s-master sh -c "echo 'ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false' >> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
-docker exec k8s-node1  sh -c "echo 'ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false' >> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
-docker exec k8s-node2  sh -c "echo 'ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false' >> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
+docker exec k8s-master sh -c "sed -i -e 's@^ExecStart=/usr/bin/kubelet.*@ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false@g' /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
+docker exec k8s-node1  sh -c "sed -i -e 's@^ExecStart=/usr/bin/kubelet.*@ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false@g' /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
+docker exec k8s-node2  sh -c "sed -i -e 's@^ExecStart=/usr/bin/kubelet.*@ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false@g' /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
 
 docker exec k8s-master sh -c "systemctl daemon-reload && systemctl restart kubelet"
 docker exec k8s-node1  sh -c "systemctl daemon-reload && systemctl restart kubelet"
