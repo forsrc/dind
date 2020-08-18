@@ -79,9 +79,9 @@ docker run -d -it --privileged=true -d -it \
 #docker exec k8s-node1  sh -c "echo -e '{\n\t \"dns\": [\"8.8.8.8\"]\n}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
 #docker exec k8s-node2  sh -c "echo -e '{\n\t \"dns\": [\"8.8.8.8\"]\n}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
 
-docker exec k8s-master sh -c "sed -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service > /etc/systemd/system/multi-user.target.wants/kubelet.service"
-docker exec k8s-node1  sh -c "sed -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service > /etc/systemd/system/multi-user.target.wants/kubelet.service"
-docker exec k8s-node2  sh -c "sed -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service > /etc/systemd/system/multi-user.target.wants/kubelet.service"
+docker exec k8s-master sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service"
+docker exec k8s-node1  sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service"
+docker exec k8s-node2  sh -c "sed -i -e 's@^ExecStart=.*@ExecStart=/usr/bin/kubelet --fail-swap-on=false@g' /etc/systemd/system/multi-user.target.wants/kubelet.service"
  
 docker exec k8s-master sh -c "echo 127.0.0.1  localhost  >  /etc/hosts"
 docker exec k8s-master sh -c "echo 172.7.0.10 k8s-master >> /etc/hosts"
