@@ -23,4 +23,6 @@ RUN systemctl enable docker
 
 VOLUME /var/lib/docker
 
-CMD ["wrapdocker"]
+EXPOSE 2375 2376
+
+CMD [ "/usr/sbin/init"]
