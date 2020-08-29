@@ -14,6 +14,8 @@ RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 
 #RUN curl -sSL https://get.docker.com/ | sh
 
+RUN apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
+
 ADD ./wrapdocker /usr/local/bin/wrapdocker
 RUN chmod +x /usr/local/bin/wrapdocker
 
