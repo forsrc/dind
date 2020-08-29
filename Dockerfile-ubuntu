@@ -1,0 +1,24 @@
+FROM ubuntu:19.10
+MAINTAINER forsrc@gmail.com
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+
+RUN apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common lxc dmsetup systemd
+
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN apt-key fingerprint 0EBFCD88
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+RUN apt-get install docker-ce docker-ce-cli containerd.io
+
+#RUN curl -sSL https://get.docker.com/ | sh
+
+ADD ./wrapdocker /usr/local/bin/wrapdocker
+RUN chmod +x /usr/local/bin/wrapdocker
+
+RUN systemctl enable docker
+
+VOLUME /var/lib/docker
+
+CMD ["wrapdocker"]
