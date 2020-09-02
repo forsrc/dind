@@ -1,0 +1,19 @@
+FROM forsrc/dind:k8s
+
+RUN yum makecache fast
+
+
+RUN yum install -y openssh-server openssh-clients
+
+RUN rm -rf /var/cache/yum/* && yum clean all
+
+RUN sed -ri 's/^#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/^UsePAM yes/UsePAM no/'                     /etc/ssh/sshd_config
+
+RUN ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y 2>&1 >/dev/null
+
+RUN systemctl enable sshd
+
+EXPOSE 22
+
+CMD [ "/usr/sbin/init"]
