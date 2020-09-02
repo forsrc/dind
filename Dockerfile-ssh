@@ -1,0 +1,24 @@
+FROM forsrc/dind
+
+RUN yum makecache fast
+
+
+RUN yum install -y openssh-server openssh-clients
+
+RUN rm -rf /var/cache/yum/* && yum clean all
+
+RUN sed -ri 's/^#PermitRootLogin yes/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/^UsePAM yes/UsePAM no/'                     /etc/ssh/sshd_config
+
+RUN ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y 2>&1 >/dev/null
+#RUN openssl rsa -in ~/.ssh/id_rsa -outform pem > ~/.ssh/id_rsa.pem
+RUN touch  ~/.ssh/authorized_keys
+RUN cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+RUN chmod 600 ~/.ssh/authorized_keys
+# ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@localhost echo ssh ok
+
+RUN systemctl enable sshd
+
+EXPOSE 22
+
+CMD [ "/usr/sbin/init"]
