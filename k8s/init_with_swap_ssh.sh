@@ -68,5 +68,5 @@ docker run -d -it --privileged=true -d -it \
     forsrc/dind:k8s /usr/sbin/init
 
 
-docker exec  k8s-master sh -c "cat > /init_with_ssh.sh" < init_with_ssh.sh
-docker exec  k8s-master sh -c "chmod +x /init_with_ssh.sh && /init_with_ssh.sh"
+docker exec -i k8s-master sh -c "cat >init_with_ssh.sh" < init_with_ssh.sh
+docker exec -i k8s-master sh -c "chmod +x /init_with_ssh.sh && /init_with_ssh.sh"
