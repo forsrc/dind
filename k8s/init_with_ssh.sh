@@ -4,7 +4,7 @@ ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@k8s-node2 echo ssh ok
 sleep 2
 
 exec_all() {
-    echo $1 | sh --
+    echo $1 | sh
     echo $1 | ssh -i ~/.ssh/id_rsa root@k8s-node1 sh
     echo $1 | ssh -i ~/.ssh/id_rsa root@k8s-node2 sh
      
@@ -38,6 +38,10 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documen
 
 echo 'source /usr/share/bash-completion/bash_completion' >>~/.bashrc
 echo 'source <(kubectl completion bash)'                 >>~/.bashrc
+
+source ~/.bashrc
 kubectl get nodes
 kubectl get pod --all-namespaces -o wide
+
+
 
