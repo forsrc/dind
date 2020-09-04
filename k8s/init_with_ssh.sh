@@ -1,7 +1,14 @@
-ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@k8s-node1 echo ssh ok
-ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@k8s-node2 echo ssh ok
+#!/bin/bash
 
-sleep 2
+echo 127.0.0.1  localhost  >  /etc/hosts
+echo 172.7.0.10 k8s-master >> /etc/hosts
+echo 172.7.0.11 k8s-node1  >> /etc/hosts
+echo 172.7.0.12 k8s-node2  >> /etc/hosts
+
+ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@k8s-master echo ssh ok
+ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@k8s-node1  echo ssh ok
+ssh -o "StrictHostKeyChecking=no" -i ~/.ssh/id_rsa root@k8s-node2  echo ssh ok
+
 
 exec_all() {
     echo $1 | sh
@@ -19,10 +26,10 @@ exec_node() {
 exec_all "sed -i -e 's@^ExecStart=/usr/bin/kubelet.*@ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS \$KUBELET_EXTRA_ARGS --fail-swap-on=false@g' /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
 exec_all "systemctl daemon-reload && systemctl restart kubelet"
 
-exec_all "echo 127.0.0.1  localhost  >  /etc/hosts"
-exec_all "echo 172.7.0.10 k8s-master >> /etc/hosts"
-exec_all "echo 172.7.0.11 k8s-node1  >> /etc/hosts"
-exec_all "echo 172.7.0.12 k8s-node2  >> /etc/hosts"
+exec_node "echo 127.0.0.1  localhost  >  /etc/hosts"
+exec_node "echo 172.7.0.10 k8s-master >> /etc/hosts"
+exec_node "echo 172.7.0.11 k8s-node1  >> /etc/hosts"
+exec_node "echo 172.7.0.12 k8s-node2  >> /etc/hosts"
 
 
 kubeadm init --kubernetes-version=`kubeadm version -o short` --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.7.0.10 --ignore-preflight-errors=all
