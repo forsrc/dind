@@ -37,7 +37,7 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/master/run/flannel/:/run/flannel/ \
     --hostname k8s-master \
     --name k8s-master \
-    forsrc/dind:k8s /usr/sbin/init
+    forsrc/dind:k8s-ssh /usr/sbin/init
 
 docker run -d -it --privileged=true -d -it \
     --network net-dind-k8s \
@@ -51,7 +51,7 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/node1/run/flannel/:/run/flannel/ \
     --hostname k8s-node1 \
     --name k8s-node1 \
-    forsrc/dind:k8s /usr/sbin/init
+    forsrc/dind:k8s-ssh /usr/sbin/init
   
 docker run -d -it --privileged=true -d -it \
     --network net-dind-k8s \
@@ -65,7 +65,7 @@ docker run -d -it --privileged=true -d -it \
     -v /dind-k8s/node2/run/flannel/:/run/flannel/ \
     --hostname k8s-node2 \
     --name k8s-node2 \
-    forsrc/dind:k8s /usr/sbin/init
+    forsrc/dind:k8s-ssh /usr/sbin/init
 
 
 docker exec -i k8s-master sh -c "cat >init_with_ssh.sh" < init_with_ssh.sh
