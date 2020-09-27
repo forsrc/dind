@@ -21,6 +21,7 @@ mkdir -p /dind-k8s/node2/etc/kubernetes
 
 mkdir -p /dind-k8s/etc/
 echo 'nameserver 8.8.8.8' > /dind-k8s/etc/resolv.conf
+sleep 3
 
 
 docker network create --subnet=172.7.0.0/24 --gateway=172.7.0.1 net-dind-k8s
