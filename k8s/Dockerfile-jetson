@@ -5,16 +5,19 @@ MAINTAINER forsrc@gmail.com
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
+RUN apt-get install -y apt-transport-https ca-certificates curl
+RUN mkdir /etc/apt/keyrings
+RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" \
+    tee /etc/apt/sources.list.d/kubernetes.list  > /dev/null
 
-RUN apt-get install -y apt-transport-https curl
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
 RUN apt-get update
 RUN apt-get install -y kubelet kubeadm kubectl
 
 RUN apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 RUN systemctl enable docker
+RUN systemctl enable containerd
 RUN systemctl enable kubelet
 
 VOLUME /var/lib/docker
