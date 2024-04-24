@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -y apt-transport-https ca-certificates curl
-RUN mkdir /etc/apt/keyrings
+RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
 RUN echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" \
     tee /etc/apt/sources.list.d/kubernetes.list  > /dev/null
