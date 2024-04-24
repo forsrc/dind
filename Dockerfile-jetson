@@ -14,7 +14,7 @@ RUN echo \
     tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN apt-get update
 
-RUN apt-get install -f docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 RUN apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
