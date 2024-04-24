@@ -1,28 +1,25 @@
 FROM forsrc/dind:jetson
 MAINTAINER forsrc@gmail.com
 
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 
-RUN apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common lxc dmsetup systemd
-
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-RUN apt-key fingerprint 0EBFCD88
-RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-RUN apt-get install -y docker-ce docker-ce-cli containerd.io
-
-#RUN curl -sSL https://get.docker.com/ | sh
+RUN apt-get install -y apt-transport-https curl
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+RUN apt-get update
+RUN apt-get install -y kubelet kubeadm kubectl
 
 RUN apt-get clean autoclean && apt-get autoremove --yes && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-ADD ./wrapdocker /usr/local/bin/wrapdocker
-RUN chmod +x /usr/local/bin/wrapdocker
-
 RUN systemctl enable docker
+RUN systemctl enable kubelet
 
 VOLUME /var/lib/docker
+VOLUME /var/lib/kubelet
 
-EXPOSE 2375 2376
+EXPOSE 6443 10248
 
 CMD [ "/usr/sbin/init"]
